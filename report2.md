@@ -52,7 +52,7 @@ tips: $e(x_j)$ 是当前 step 的 query token，Actor Agent 需要一个“task 
 ### 损失函数
 <img src="image-12.png" width="50%">
 
-#### action Loss
+#### Task Loss
 标准CrossEntropy Loss，监督模型生成正确的答案
 作用：约束 Actor 的最终输出必须正确
 
@@ -60,13 +60,18 @@ tips: $e(x_j)$ 是当前 step 的 query token，Actor Agent 需要一个“task 
 <img src="image-14.png" width="50%">
 
 H为正确match的latent ， H'为dismatch的latent
+让正确推理 和 错误推理 的输出尽量不同，让模型“区分好思维 vs 坏思维”
 目的：让p(y|C,H) ≠ p(y|C,H')，正确的思维和错误的思维应该产生不同的输出分布
 
 #### alignment loss
 <img src="image-15.png" width="50%">
 
+用 latent 的输出分布，去逼近 plan（语言CoT）的分布
 P = reasoning model 生成的 CoT / plan
 目的：p(y|C,H) ≈ p(y|C,P)，latent思维要与语言思维一致
+
+>JS 散度用于“拉开正确与错误推理的差距”，
+KL 散度用于“让 latent 推理对齐语言推理”。
 
 #### Curriculum Learning
 不要一开始就让模型完全依赖 latent（h），而是逐步从 token embedding（e）过渡到 latent。
