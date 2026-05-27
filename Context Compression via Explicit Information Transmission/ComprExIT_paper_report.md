@@ -92,25 +92,23 @@ z_k^{(\ell+1)}
 
 但真正关键的 “Paris” 或 “2012” 反而没有被充分压缩进去。这就是论文说的 **lack of global allocation**。
 
-
-
-### 4.1 传统 LLM-as-compressor 的两个问题
+### 3.1 传统 LLM-as-compressor 的两个问题
 
 ![Figure 1: Two structural weaknesses](image.png)
 这张图用一个简化问答例子说明传统 LLM-as-a-compressor 方法的两个结构性缺陷。输入上下文是 “Alice moved to Paris in 2012.”，问题是 “When did Alice move?”。理想情况下，压缩表示需要保留地点 Paris 和时间 2012 等关键信息。
 
 图中展示了两个失败点。第一，**lack of global allocation**：多个 compression tokens 可能重复关注 Alice 等局部信息，而关键 token Paris 没有被足够关注。第二，**representation overwriting**：即使某个 compression token 在早期或中间层捕获到了 2012，随着层数加深，它的表示也可能被后续 self-attention 更新覆盖或抽象化，导致 decoder 最终拿不到可用的细节信息。
 
-## 4. 方法整体工作流程
-
-ComprExIT 的整体流程可以概括为五步。
-
-### 4.1 ComprExIT 与 LLM-as-compressor 的对比
+### 3.2 ComprExIT 与 LLM-as-compressor 的对比
 
 ![Figure 2: Architecture comparison](figures/figure2_architecture.png)
 
 左侧是传统 LLM-as-a-compressor：方法会引入 gist tokens / compression tokens，并让它们在 LLM 的 self-attention 层中一层层吸收上下文信息。这种方式本质上把 LLM 的内部计算改造成 compressor，因此压缩过程和 Transformer 的逐层更新强耦合。
 右侧是 ComprExIT：LLM 层本身是冻结的，先对上下文做一次前向传播，得到多层 hidden states。然后压缩模块执行两个显式步骤：第一步是 **planned depth-wise transmission**，把不同层的 hidden states 选择性聚合成 token anchors；第二步是 **planned width-wise transmission**，通过全局协调的 transmission plan 把 token anchors 聚合到 compression slots 中。
+
+## 4. 方法整体工作流程
+
+ComprExIT 的整体流程可以概括为五步。
 
 ### Step 1: 冻结 LLM 并提取多层 hidden states
 
