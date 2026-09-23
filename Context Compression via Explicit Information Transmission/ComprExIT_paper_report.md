@@ -1,5 +1,5 @@
-# 论文汇报：Context Compression via Explicit Information Transmission
-
+![alt text](image-4.png)
+[原文](https://arxiv.org/abs/2602.03784)
 ## 1. 这篇论文主要在做什么
 
 这篇论文提出了一种新的软上下文压缩方法 **ComprExIT**。它的目标是将原始长上下文中的 \(N\) 个 token 压缩成 \(K\) 个连续向量形式的 compression slots，其中 \(K \ll N\)，然后把这些压缩向量作为压缩后的上下文提供给 decoder 使用。
